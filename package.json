@@ -1,7 +1,11 @@
 {
   "name": "remote-type-bundler",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
+  "main": "./dist/bundler.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "esbuild": "esbuild --bundle --target=esnext --platform=node --external:fsevents --outfile=dist/bundle.js src/index.ts",
