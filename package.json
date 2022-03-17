@@ -1,0 +1,29 @@
+{
+  "name": "remote-type-bundler",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "esbuild": "esbuild --bundle --target=esnext --platform=node --external:fsevents --outfile=dist/bundle.js src/index.ts",
+    "test": "jest"
+  },
+  "bin": {
+    "remote-types-bundler": "./bin.js"
+  },
+  "dependencies": {
+    "@types/resolve": "^1.20.1",
+    "debug": "^4.3.3",
+    "get-latest-version": "^4.0.0",
+    "jest": "^27.5.1",
+    "node-fetch": "^3.2.3",
+    "resolve": "^1.22.0",
+    "rollup": "^2.70.1",
+    "rollup-plugin-dts": "^4.2.0",
+    "tempy": "^2.0.0",
+    "typescript": "^4.6.2"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.7",
+    "esbuild": "^0.14.27",
+    "ts-node": "^10.7.0"
+  }
+}
