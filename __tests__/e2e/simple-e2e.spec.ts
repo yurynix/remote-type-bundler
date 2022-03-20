@@ -41,4 +41,22 @@ describe('Types bundler', () => {
         type Bla { one: Foo };
         export { Bla };`));
     });
+
+    it('should not touch absolute references', async () => {
+        const mockPackages = {
+            ...pkg('@wix/yury-pkg@1.0.0', `/// <reference path="/elementsMap.d.ts" />
+            /// <reference path="/types/pages/$w.d.ts" />
+            export type Bla { one: Foo };`),
+        };
+        (fetch as any).setMockedNpmPackages(mockPackages);
+        
+        const result = await bundle('@wix/yury-pkg@1.0.0', '/tmp/bundle.d.ts');
+
+        expect(result).toBeTruthy();
+
+        expect(removeAllWhiteSpaces(result)).toBe(removeAllWhiteSpaces(`/// <reference path="/elementsMap.d.ts" />
+        /// <reference path="/types/pages/$w.d.ts" />
+        type Bla { one: Foo };
+        export { Bla };`));
+    });
 });
