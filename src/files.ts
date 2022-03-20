@@ -98,7 +98,7 @@ export async function getPackageDetails(projectRootPath: string, request: string
             containingPackage
         };
     } else {
-        const packageName = request.split(path.sep)[0];
+        const packageName = request.startsWith('@') ? request.split(path.sep).slice(0, 2).join(path.sep) : request.split(path.sep)[0];
         const importerPkgJsonResult = await locateClosestPackageJson(importer || projectRootPath);
         if (!importerPkgJsonResult) {
             throw new Error(`Unable to find package.json while searching from ${importer || projectRootPath} upwards`); 

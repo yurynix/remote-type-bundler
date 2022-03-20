@@ -8,7 +8,9 @@ import { cacheFactory } from './cache';
 
 export async function bundle(packageIdentifier: string, outputFilePath: string) {
     try {
-        const [packageName, packageVersion] = packageIdentifier.split('@');
+        const packageIdentifierParts = packageIdentifier.split('@');
+        const packageName = packageIdentifierParts.slice(0, -1).join('@');
+        const packageVersion = packageIdentifierParts[packageIdentifierParts.length - 1];
         console.log(`Trying to bundle package: ${packageName} version:${packageVersion} to ${outputFilePath}`);
         let resultCode = undefined;
         await tempy.directory.task(async tempDirectory => {
