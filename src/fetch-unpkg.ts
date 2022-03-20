@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import fetch from 'node-fetch';
 import createDebug from 'debug';
+import type { CacheFactory } from './cache';
 
 const debug = createDebug('fetch-unpkg');
 
@@ -23,13 +24,14 @@ export async function saveFileFromPackage(rootDir: string, packageName: string, 
     return data;
 }
 
-function createDataFetcher() {
-    const cache = new Map();
+function createDataFetcher(cacheFactory: CacheFactory<string, Promise<string>>) {
+    const cache = cacheFactory('url-fetch-cache');
 
-    return function getData(url: string): Promise<string> {
-        if (cache.has(url)) {
+    return async function getData(url: string): Promise<string> {
+        if (await cache.has(url)) {
             debug(`Cache hit for ${url}`);
-            return cache.get(url);
+            const cacheResult = await cache.get(url);
+            return cacheResult as string;
         }
 
         const promise: Promise<string> = new Promise(async (resolve, reject) => {
@@ -48,23 +50,24 @@ function createDataFetcher() {
             }
         });
 
-        cache.set(url, promise);
+        await cache.set(url, promise);
 
         return promise;
     }
 }
 
 export type FetcherFunction = (rootDir: string, packageName: string, packageVersion: string, filePath: string) => Promise<string>;
-export function createFetcher() : FetcherFunction {
-    const overallCache = new Map();
-    const getData = createDataFetcher();
+export function createFetcher(cacheFactory: CacheFactory<string, Promise<string>>) : FetcherFunction {
+    const overallCache = cacheFactory('final-result-save-file-from-pacakage');
+    const getData = createDataFetcher(cacheFactory);
 
-    return function saveFileFromPackage(rootDir: string, packageName: string, packageVersion: string, filePath: string) : Promise<string> {
+    return async function saveFileFromPackage(rootDir: string, packageName: string, packageVersion: string, filePath: string) : Promise<string> {
         const url = `https://unpkg.com/${packageName}@${packageVersion}/${filePath}`;
         const overallCacheKey = `${url}|${filePath}`;
-        if (overallCache.has(overallCacheKey)) {
+        if (await overallCache.has(overallCacheKey)) {
             debug(`Using cached ${overallCacheKey}`);
-            return overallCache.get(overallCacheKey);
+            const cacheResult = await overallCache.get(overallCacheKey);
+            return cacheResult as string;
         }
 
         overallCache.set(overallCacheKey, new Promise(async (resolve, reject) => {
@@ -81,6 +84,6 @@ export function createFetcher() : FetcherFunction {
             }
         }));
 
-        return overallCache.get(overallCacheKey);
+        return (await overallCache.get(overallCacheKey)) as string;
     };
 }
