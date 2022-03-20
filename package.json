@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tsc",
     "esbuild": "esbuild --bundle --target=esnext --platform=node --external:fsevents --outfile=dist/bundle.js src/index.ts",
-    "test": "jest"
+    "test": "jest --config ./jest.config.js"
   },
   "bin": {
     "remote-types-bundler": "./bin.js"
@@ -17,18 +17,25 @@
   "dependencies": {
     "debug": "^4.3.3",
     "get-latest-version": "^4.0.0",
-    "node-fetch": "^3.2.3",
+    "node-fetch": "^2.6.7",
     "resolve": "^1.22.0",
     "rollup": "^2.70.1",
     "rollup-plugin-dts": "^4.2.0",
-    "tempy": "^2.0.0",
+    "tempy": "^1.0.1",
     "typescript": "^4.6.2"
   },
   "devDependencies": {
-    "@types/resolve": "^1.20.1",
+    "@babel/core": "^7.17.8",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-typescript": "^7.16.7",
     "@types/debug": "^4.1.7",
-    "jest": "^27.5.1",
+    "@types/jest": "^27.4.1",
+    "@types/node-fetch": "^2.6.1",
+    "@types/resolve": "^1.20.1",
+    "babel-jest": "^27.5.1",
     "esbuild": "^0.14.27",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.3",
     "ts-node": "^10.7.0"
   }
 }
