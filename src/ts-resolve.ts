@@ -61,6 +61,13 @@ export const tsResolvePlugin: PluginImpl<TsResolveOptions> = (pluginOptions : Ts
       debug('resolveId source: %s', source)
       debug('resolveId importer: %s ', importer)
 
+      if (source.startsWith('/') || source.startsWith('.')) {
+        const requestRelativeToProjectRoot = path.relative(projectRootPath, source);
+        if (requestRelativeToProjectRoot.startsWith('..')) {
+          throw new Error(`Unable to process ${source} as it is outside of the project root - ${requestRelativeToProjectRoot}`);
+        }
+      }
+
       await prepareFile(source, importer, projectRootPath, saveFileFromPackage, resolveExtensions);
 
       //if (!importer) return null
