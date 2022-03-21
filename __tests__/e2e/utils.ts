@@ -1,4 +1,5 @@
 const UNPKG_BASE = 'https://unpkg.com/';
+import type fetch from 'node-fetch';
 
 export const pkg = (pkgIdentifier, typesContents, dependencies = {}) => {
     const types = 'lib/types.d.ts';
@@ -29,28 +30,34 @@ export const pkg = (pkgIdentifier, typesContents, dependencies = {}) => {
     };
 }
 
+type Fetch = typeof fetch;
+export interface MockedFetch extends Fetch {
+    setMockedNpmPackages: (pkgs: { [key: string]: string }) => void;
+}
+
 jest.mock('node-fetch', () => {
     let mockPackages = {};
     const fn = jest.fn((url: string) => {
-            console.log(`Requested: ${url}`);
-            const urlWithoutBase = url.replace(UNPKG_BASE, '');
-            const file = mockPackages[urlWithoutBase];
-        
-            if (file) {
-                return {
-                    ok: true,
-                    text: jest.fn(() => Promise.resolve(file))
-                };
-            }
-        
-            return {
-                ok: false,
-                text: jest.fn(() => Promise.resolve('Error'))
-            };
-    });
+        console.log(`Requested: ${url}`);
+        const urlWithoutBase = url.replace(UNPKG_BASE, '');
+        const file = mockPackages[urlWithoutBase];
 
-    (fn as any).setMockedNpmPackages = (pkgs: any) => {
+        if (file) {
+            return {
+                ok: true,
+                text: jest.fn(() => Promise.resolve(file))
+            };
+        }
+
+        return {
+            ok: false,
+            text: jest.fn(() => Promise.resolve('Error'))
+        };
+    }) as unknown as MockedFetch;
+
+    fn.setMockedNpmPackages = (pkgs: any) => {
         mockPackages = pkgs;
-    }
+    };
+
     return fn;
 });
