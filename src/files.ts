@@ -88,13 +88,15 @@ export async function getPackageDetails(projectRootPath: string, request: string
                 version: containingPkgJsonResult.pkgJson.version,
                 dir: containingPkgJsonResult.containingDir,
             };
-        } 
+        }
+
+        const relativeRoot = path.dirname(importer || projectRootPath).replace(importerPkgJsonResult.containingDir + path.sep, '');
 
         return {
             packageName: importerPkgJsonResult.pkgJson.name,
             packageSemVer: importerPkgJsonResult.pkgJson.version,
             dir: importerPkgJsonResult.containingDir,
-            realtiveRequest: request.replace('./', ''), // TODO: This should be smarter
+            realtiveRequest: path.join(relativeRoot, request),
             containingPackage
         };
     } else {

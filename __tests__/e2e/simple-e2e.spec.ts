@@ -22,6 +22,44 @@ describe('Types bundler', () => {
         export { Bla };`));
     });
 
+    it('should work with external package dependency with relative .. path import', async () => {
+        const mockPackages = {
+            ...pkg('yury-pkg@1.0.0', `import { Foo } from 'foo-pkg';
+            export type Bla { one: Foo };`, { 'foo-pkg': '1.2.3' }),
+            ...pkg('foo-pkg@1.2.3', `import SomeType from '../some-types';
+            export type Foo { fighters: string };`),
+            ['foo-pkg@1.2.3/some-types.d.ts']: 'export type SomeType = string;',
+        };
+        (fetch as MockedFetch).setMockedNpmPackages(mockPackages);
+        
+        const result = await bundle('yury-pkg@1.0.0', '/tmp/bundle.d.ts');
+
+        expect(result).toBeTruthy();
+
+        expect(removeAllWhiteSpaces(result)).toBe(removeAllWhiteSpaces(`type Foo { fighters: string };
+        type Bla { one: Foo };
+        export { Bla };`));
+    });
+
+    it('should work with external package dependency with relative . path import', async () => {
+        const mockPackages = {
+            ...pkg('yury-pkg@1.0.0', `import { Foo } from 'foo-pkg';
+            export type Bla { one: Foo };`, { 'foo-pkg': '1.2.3' }),
+            ...pkg('foo-pkg@1.2.3', `import SomeType from './some-types';
+            export type Foo { fighters: string };`),
+            ['foo-pkg@1.2.3/lib/some-types.d.ts']: 'export type SomeType = string;',
+        };
+        (fetch as MockedFetch).setMockedNpmPackages(mockPackages);
+        
+        const result = await bundle('yury-pkg@1.0.0', '/tmp/bundle.d.ts');
+
+        expect(result).toBeTruthy();
+
+        expect(removeAllWhiteSpaces(result)).toBe(removeAllWhiteSpaces(`type Foo { fighters: string };
+        type Bla { one: Foo };
+        export { Bla };`));
+    });
+
     it('should work with scoped packages dependency', async () => {
         const mockPackages = {
             ...pkg('@wix/yury-pkg@1.0.0', `import { Foo } from '@wix/foo-pkg';
