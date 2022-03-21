@@ -5,8 +5,13 @@ import { tsResolvePlugin } from './ts-resolve';
 import tempy from 'tempy';
 import path from 'path';
 import { cacheFactory } from './cache';
+import { wrapTypesWithModuleDeclare } from './wrap-types-with-module-declare';
 
-export async function bundle(packageIdentifier: string, outputFilePath: string) {
+interface BundleOptions {
+    wrapWithModuleDeclare?: boolean;
+}
+
+export async function bundle(packageIdentifier: string, outputFilePath: string, options: BundleOptions = {}) {
     try {
         const packageIdentifierParts = packageIdentifier.split('@');
         const packageName = packageIdentifierParts.slice(0, -1).join('@');
@@ -34,7 +39,12 @@ export async function bundle(packageIdentifier: string, outputFilePath: string) 
             const result = await bundle.write({ file: outputFilePath });
 
             console.log(`Done bundle package: ${packageName} version:${packageVersion} to`, result.output.map(o => o.fileName).join(''));
-            resultCode = result.output[0].code;
+            const outputCode = result.output[0].code;
+            if (options.wrapWithModuleDeclare) {
+                resultCode = wrapTypesWithModuleDeclare(outputCode, packageName);
+            } else {
+                resultCode = outputCode;
+            }
 		});
 
         return resultCode;
