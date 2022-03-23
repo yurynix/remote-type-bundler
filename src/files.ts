@@ -1,37 +1,11 @@
 import { builtinModules } from 'module'
 import getLatestVersion from 'get-latest-version';
 import path from 'path';
-import fs from 'fs';
+import { locateClosestPackageJson } from './locate-closest-package-json';
 import { FetcherFunction } from './fetch-unpkg';
 import createDebug from 'debug';
 
 const debug = createDebug('files');
-
-async function tryReadPackageJson(containingDir: string) {
-    try {
-        const pkgJsonPath = path.join(containingDir, 'package.json');
-        const data = await fs.promises.readFile(pkgJsonPath, 'utf8');
-        return JSON.parse(data);
-    } catch (e) {
-        return null;
-    }
-}
-
-async function locateClosestPackageJson(containingDir: string) {
-    let dir = containingDir;
-    while (dir !== '/') {
-        const pkgJson = await tryReadPackageJson(dir);
-        if (pkgJson) {
-            return {
-                containingDir: dir,
-                pkgJson,
-            }
-        }
-        dir = path.dirname(dir);
-    }
-
-    return null;
-}
 
 interface PackageDetails {
     containingPackage?: {
@@ -81,7 +55,7 @@ export async function getPackageDetails(projectRootPath: string, request: string
         }
 
         let containingPackage = undefined;
-        const containingPkgJsonResult = await locateClosestPackageJson(importerPkgJsonResult.containingDir);
+        const containingPkgJsonResult = projectRootPath === importerPkgJsonResult.containingDir ? undefined : await locateClosestPackageJson(importerPkgJsonResult.containingDir);
         if (containingPkgJsonResult) {
             containingPackage = {
                 name: containingPkgJsonResult.pkgJson.name,
@@ -90,7 +64,12 @@ export async function getPackageDetails(projectRootPath: string, request: string
             };
         }
 
-        const relativeRoot = path.dirname(importer || projectRootPath).replace(importerPkgJsonResult.containingDir + path.sep, '');
+        let relativeRoot = undefined;
+        if (importer) {
+            relativeRoot = path.dirname(importer).replace(importerPkgJsonResult.containingDir + path.sep, '');
+        } else {
+            relativeRoot = projectRootPath.replace(importerPkgJsonResult.containingDir, '');
+        }
 
         return {
             packageName: importerPkgJsonResult.pkgJson.name,
@@ -106,11 +85,16 @@ export async function getPackageDetails(projectRootPath: string, request: string
             throw new Error(`Unable to find package.json while searching from ${importer || projectRootPath} upwards`); 
         }
 
+        // Doesn't have a dependency, that's a relative path request.
+        if (!importerPkgJsonResult.pkgJson.dependencies[packageName] && !importerPkgJsonResult.pkgJson.devDependencies[packageName]) {
+            return getPackageDetails(projectRootPath, './' + request, importer);
+        }
+
         return {
             packageName,
             packageSemVer: importerPkgJsonResult.pkgJson.dependencies[packageName] || importerPkgJsonResult.pkgJson.devDependencies[packageName],
             dir: path.join(importerPkgJsonResult.containingDir, 'node_modules', packageName),
-            realtiveRequest: request.replace(packageName + path.sep, ''),
+            realtiveRequest: packageName === request ? '' : request.replace(packageName + path.sep, ''),
             containingPackage: {
                 name: importerPkgJsonResult.pkgJson.name,
                 version: importerPkgJsonResult.pkgJson.version,

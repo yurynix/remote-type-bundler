@@ -2,8 +2,6 @@ import { pkg, MockedFetch } from './utils';
 import { bundle } from '../../src/index';
 import fetch from 'node-fetch';
 
-const removeAllWhiteSpaces = (str: string) => str.replace(/\s/g, '');
-
 describe.only('Types bundler security', () => {
     it('should not import files outside the project root via relative path', async () => {
         const mockPackages = {
@@ -14,8 +12,6 @@ describe.only('Types bundler security', () => {
         (fetch as MockedFetch).setMockedNpmPackages(mockPackages);
         
         const result = await bundle('yury-pkg@1.0.0', '/tmp/bundle.d.ts', { wrapWithModuleDeclare: true });
-
-        console.log(result);
 
         expect(result).toBeUndefined();
     });
@@ -30,7 +26,6 @@ describe.only('Types bundler security', () => {
         
         const result = await bundle('yury-pkg@1.0.0', '/tmp/bundle.d.ts', { wrapWithModuleDeclare: true });
 
-        console.log(result);
         expect(result).toBeUndefined();
     });
 
@@ -44,7 +39,6 @@ describe.only('Types bundler security', () => {
         });
         
         const result = await bundle('yury-pkg@1.0.0', '/tmp/bundle.d.ts', { wrapWithModuleDeclare: true });
-        console.log(result);
         
         expect(result).toBeUndefined();
     });

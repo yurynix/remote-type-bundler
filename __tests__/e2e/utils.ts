@@ -7,8 +7,6 @@ export const pkg = (pkgIdentifier, typesContents, dependencies = {}) => {
     const packageName = packageIdentifierParts.slice(0, -1).join('@');
     const packageVersion = packageIdentifierParts[packageIdentifierParts.length - 1];
 
-    console.log(`packageName: ${packageName} packageVersion: ${packageVersion}`);
-
     const pkgJson = {
         [`${pkgIdentifier}/package.json`]: JSON.stringify({
             name: packageName,
@@ -38,7 +36,6 @@ export interface MockedFetch extends Fetch {
 jest.mock('node-fetch', () => {
     let mockPackages = {};
     const fn = jest.fn((url: string) => {
-        console.log(`Requested: ${url}`);
         const urlWithoutBase = url.replace(UNPKG_BASE, '');
         const file = mockPackages[urlWithoutBase];
 
@@ -48,6 +45,8 @@ jest.mock('node-fetch', () => {
                 text: jest.fn(() => Promise.resolve(file))
             };
         }
+
+        console.warn(`No mock defined for ${url}`);
 
         return {
             ok: false,
