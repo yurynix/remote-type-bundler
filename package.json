@@ -2,7 +2,7 @@
   "name": "remote-type-bundler",
   "version": "0.0.4",
   "license": "MIT",
-  "main": "./dist/bundler.js",
+  "main": "./dist/bundle.js",
   "files": [
     "dist"
   ],
