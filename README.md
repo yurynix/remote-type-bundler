@@ -4,10 +4,10 @@ This is my attemp to create one `.d.ts` file for a package already published on 
 
 ```
 │ puppeteer@13.5.1
-└── lib/types.dts
+└──┬ lib/types.dts
    │
-   ├── devtools-protocol@0.0.979918/types/protocol.d.ts
-   └── devtools-protocol@0.0.979918/types/protocol-mapping.d.ts
+   ├─ devtools-protocol@0.0.979918/types/protocol.d.ts
+   └─ devtools-protocol@0.0.979918/types/protocol-mapping.d.ts
 ```
 
 should be bundled together and wrapped in a `declare module 'puppeteer' { ... }`, all references from the "root" type should be followed, as in the example above.
