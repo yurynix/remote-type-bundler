@@ -1,3 +1,4 @@
+// This file is adopted from: https://github.com/egoist/tsup/blob/dev/src/rollup/ts-resolve.ts
 import fs from 'fs'
 import path from 'path'
 import _resolve from 'resolve'
@@ -67,8 +68,6 @@ export const tsResolvePlugin: PluginImpl<TsResolveOptions> = (pluginOptions : Ts
       }
 
       await prepareFile(source, importer, projectRootPath, saveFileFromPackage, resolveExtensions);
-
-      //if (!importer) return null
 
       // ignore IDs with null character, these belong to other plugins
       if (/\0/.test(source)) return null

@@ -15,7 +15,7 @@ should be bundled together.
 
 Based on:
 * [rollup](https://github.com/rollup/rollup)
-* [rollup-plugin-dts](https://github.com/Swatinem/rollup-plugin-dts)
+* [rollup-plugin-dts](https://github.com/Swatinem/rollup-plugin-dts) with [this PR merged](https://github.com/Swatinem/rollup-plugin-dts/pull/203)
 * [ts-resolve](https://github.com/egoist/tsup/blob/dev/src/rollup/ts-resolve.ts) from [tsup](https://github.com/egoist/tsup)
 * Ideas from [npm-dts](https://github.com/vytenisu/npm-dts)
 
