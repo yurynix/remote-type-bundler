@@ -38,7 +38,6 @@ export async function bundle(packageIdentifier: string, outputFilePath: string, 
             const bundle = await rollup(inputOptions);
             const result = await bundle.write({ file: outputFilePath });
 
-            console.log(`Done bundle package: ${packageName} version:${packageVersion} to`, result.output.map(o => o.fileName).join(''));
             const outputCode = result.output[0].code;
             if (options.wrapWithModuleDeclare) {
                 resultCode = wrapTypesWithModuleDeclare(outputCode, packageName);
