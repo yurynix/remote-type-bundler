@@ -1,6 +1,6 @@
-# **WiP** Bundle pacakage's .d.ts to one file **WiP**
+# **Experimental** Bundle pacakage's .d.ts to one file
 
-This is my attemp to create one `.d.ts` file for a package already published on `npm`, for example, for `puppeteer@13.5.1` all of those `.d.ts`es:
+This is an attempt to create one `.d.ts` file for a package already published on `npm`, for example, for `puppeteer@13.5.1` all of those `.d.ts`es:
 
 ```
 │ puppeteer@13.5.1

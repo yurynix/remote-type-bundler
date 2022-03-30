@@ -8,8 +8,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc --emitDeclarationOnly --declaration --outDir dist && npm run esbuild",
-    "esbuild": "esbuild --bundle --target=esnext --platform=node --external:fsevents --outfile=dist/bundle.js src/index.ts",
+    "build": "npm run build:bundle && npm run build:types",
+    "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist",
+    "build:bundle": "esbuild --bundle --target=esnext --platform=node --external:fsevents --outfile=dist/bundle.js src/index.ts",
     "test": "jest --config ./jest.config.js"
   },
   "bin": {
