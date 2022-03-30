@@ -1,6 +1,14 @@
 {
   "name": "remote-type-bundler",
   "version": "0.0.9",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wix-incubator/remote-type-bundler"
+  },
+  "author": {
+    "name": "Yury Michurin",
+    "email": "yurym@wix.com"
+  },
   "license": "MIT",
   "main": "./dist/bundle.js",
   "types": "./dist/index.d.ts",
