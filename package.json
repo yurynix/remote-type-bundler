@@ -19,7 +19,8 @@
     "build": "npm run build:bundle && npm run build:types",
     "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist",
     "build:bundle": "esbuild --bundle --target=esnext --platform=node --external:fsevents --outfile=dist/bundle.js src/index.ts",
-    "test": "jest --config ./jest.config.js"
+    "test": "jest --config ./jest.config.js",
+    "prepublishOnly": "git push --follow-tags"
   },
   "bin": {
     "remote-types-bundler": "./bin.js"
